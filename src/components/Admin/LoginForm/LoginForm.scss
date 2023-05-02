@@ -1,0 +1,19 @@
+.login-form-admin {
+  .ui.button.primary {
+    margin-top: 20px;
+    background-color: #81172d;
+    .button:hover{
+      background-color: #81172d;
+  
+    }
+    .button{
+      background-color: #81172d;
+      .ui.button.primary.buttons{
+        .button{
+          background-color: #81172d;
+        }
+      } 
+    }
+  }
+
+}
