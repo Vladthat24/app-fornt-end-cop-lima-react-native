@@ -15,6 +15,7 @@ import {
 import fotoCop from "../../../img/doctorsilueta.jpg";
 import "./ConsultaColegiado.scss";
 import { BASE_API } from "../../../utils/constants";
+import DetalleConsultaColegiado from "./DetalleConsultaColegiado";
 
 export function ConsultaColegiado() {
   const [formValues, setFormValues] = useState({
@@ -36,9 +37,7 @@ export function ConsultaColegiado() {
         console.log("Al menos un campo tiene valor");
         const query = `?cop=${numCOP}&nombre=${nombre}&apellido_paterno=${apellidoPaterno}&apellido_materno=${apellidoMaterno}&page=${activePage}&page_size=6`;
         try {
-          const response = await fetch(
-            `${BASE_API}/api/registro/${query}`
-          );
+          const response = await fetch(`${BASE_API}/api/registro/${query}`);
           const result = await response.json();
           setData(result.results);
           setTotalPages(Math.ceil(result.count / 6));
@@ -159,65 +158,19 @@ export function ConsultaColegiado() {
                     {item.apellido_paterno} {item.apellido_materno}
                   </Card.Description>
                   <div class="extra content" style={{ marginTop: "20px" }}>
-                    {/* <span class="right floated ui">{item.colegio_regional}</span> */}
                     <a class="ui red tag label right floated">
                       {item.colegio_regional}
                     </a>
-                    {/* <span class="ui red tag floated right">{item.colegio_regional}</span> */}
                     <span>
                       <i class="user icon"></i>
                       <a class="ui red circular label">{item.cop}</a>
                     </span>
                   </div>
-                  <Table basic="very" celled collapsing>
-                    <Table.Header>
-                      <Table.Row>
-                        <Table.HeaderCell>Descripcion</Table.HeaderCell>
-                        <Table.HeaderCell>Código</Table.HeaderCell>
-                      </Table.Row>
-                    </Table.Header>
 
-                    <Table.Body>
-                      <Table.Row>
-                        <Table.Cell>
-                          <Header as="h4" image>
-                            <Header.Content>
-                              <Label color="red" horizontal>
-                                Tipo:
-                              </Label>{" "}
-                              <Header.Subheader style={{ marginTop: "10px" }}>
-                                <Label
-                                  color="gray"
-                                  horizontal
-                                  style={{ marginLeft: "50%" }}
-                                >
-                                  RNA
-                                </Label>{" "}
-                              </Header.Subheader>
-                            </Header.Content>
-                          </Header>
-                        </Table.Cell>
-                        <Table.Cell rowSpan="2" style={{fontSize:"25px"}}>443</Table.Cell>
-                      </Table.Row>
-                      <Table.Row>
-                        <Table.Cell>
-                          <Header as="h4" image>
-                            <Header.Content>
-                              <Label color="red" horizontal>
-                                Registro:
-                              </Label>{" "}
-                              <Header.Subheader style={{ marginTop: "10px" }}>
-                                <Label color="gray" horizontal>
-                                  DIPLOMADO EN AUDITORIA MEDICA
-                                </Label>{" "}
-                              </Header.Subheader>
-                            </Header.Content>
-                          </Header>
-                        </Table.Cell>
-                        
-                      </Table.Row>
-                    </Table.Body>
-                  </Table>
+                  <DetalleConsultaColegiado
+                    fotoCop={fotoCop}
+                    datosColegiado={item}
+                  />
                 </Card.Content>
               </Card>
             ))
