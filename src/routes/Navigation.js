@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { map } from "lodash";
 import routes from "./routes";
+import { Error404 } from "../pages";
 
 console.log(routes);
 export function Navigation() {

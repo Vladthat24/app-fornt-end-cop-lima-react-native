@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useRegistro } from "../../hooks/useRegistro";
 import { RegistroTablesAdmin } from "../../components/Admin";
 
-const API_URL = "http://127.0.0.1:8000/api/registro/";
+/* const API_URL = "http://127.0.0.1:8000/api/registro/"; */
+const API_URL= "https://apicopperu.colegiodeobstetras.pe/api/registro/";
 
 export function RegistrosAdmin() {
   const [data, setData] = useState([]);
