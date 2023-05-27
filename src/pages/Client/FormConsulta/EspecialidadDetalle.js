@@ -13,9 +13,6 @@ export function EspecialidadDetalle(props) {
   if (estudios === null) {
     return null;
   }
-  console.log("estudios: ", estudios);
-  console.log("tipoEstudio: ", tipoEstudio);
-  console.log("--------------");
   return (
     <Table celled>
       <Table.Header>
