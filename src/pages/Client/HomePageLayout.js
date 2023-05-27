@@ -6,7 +6,6 @@ import fotoCop from "../../img/doctorsilueta.jpg";
 import {
   Button,
   Container,
-  Divider,
   Grid,
   Header,
   Icon,
@@ -19,15 +18,12 @@ import {
   Form,
   Card,
   Label,
-  Table,
 } from "semantic-ui-react";
 import { BotonLogin } from "./SelectTable/BotonLogin";
-import { Link, useParams } from "react-router-dom";
-import { get, noop } from "lodash";
+import { useParams } from "react-router-dom";
 import { useRegistro } from "../../hooks";
 import { ConsultaColegiado } from "./FormConsulta";
-import { useNavigate } from "react-router-dom";
-import { FOCUSABLE_SELECTOR } from "@testing-library/user-event/dist/utils";
+import Especilidad from "./Especialidad/Especialidad";
 
 const { MediaContextProvider, Media } = createMedia({
   breakpoints: {
@@ -36,6 +32,7 @@ const { MediaContextProvider, Media } = createMedia({
     computer: 1024,
   },
 });
+
 
 const ObtenerDatos = () => {
   const { ncop } = useParams();
@@ -67,92 +64,46 @@ const ObtenerDatos = () => {
                 Datos del Colegiado
               </Label>
               <Grid.Row>
-                <Grid.Column floated="right" width={6}>
+                <Grid.Column floated="right" width={7}>
                   <Image bordered rounded size="large" src={fotoCop} />
                 </Grid.Column>
                 <Grid.Column width={8}>
-                  <Card.Header style={{ fontSize: "2.33em", color: "#81172d" }}>
-                    {resultado.apellido_paterno +
-                      " " +
-                      resultado.apellido_materno}
-                  </Card.Header>
-                  <Card.Meta
-                    style={{
-                      fontSize: "1.33em",
-                      color: "#81172d",
-                      marginTop: "5%",
-                    }}
-                  >
-                    {resultado.nombre}
-                  </Card.Meta>
-
-                  <Label
-                    as="a"
-                    color="teal"
-                    tag
-                    style={{
-                      float: "right",
-                      marginBottom: "30px",
-                      marginTop: "30px",
-                    }}
-                  >
-                    {resultado.colegio_regional}
-                  </Label>
-                  <Table
-                    basic="very"
-                    celled
-                    collapsing
-                    style={{ width: "100%" }}
-                  >
-                    <Table.Header>
-                      <Table.Row>
-                        <Table.HeaderCell>Descripcion</Table.HeaderCell>
-                        <Table.HeaderCell>Código</Table.HeaderCell>
-                      </Table.Row>
-                    </Table.Header>
-
-                    <Table.Body>
-                      <Table.Row>
-                        <Table.Cell>
-                          <Header as="h4" image>
-                            <Header.Content>
-                              <Label color="red" horizontal>
-                                Tipo:
-                              </Label>{" "}
-                              <Header.Subheader style={{ marginTop: "10px" }}>
-                                <Label
-                                  color="gray"
-                                  horizontal
-                                  style={{ marginLeft: "50%" }}
-                                >
-                                  RNA
-                                </Label>{" "}
-                              </Header.Subheader>
-                            </Header.Content>
-                          </Header>
-                        </Table.Cell>
-                        <Table.Cell rowSpan="2" style={{ fontSize: "25px" }}>
-                          443
-                        </Table.Cell>
-                      </Table.Row>
-                      <Table.Row>
-                        <Table.Cell>
-                          <Header as="h4" image>
-                            <Header.Content>
-                              <Label color="red" horizontal>
-                                Registro:
-                              </Label>{" "}
-                              <Header.Subheader style={{ marginTop: "10px" }}>
-                                <Label color="gray" horizontal>
-                                  DIPLOMADO EN AUDITORIA MEDICA
-                                </Label>{" "}
-                              </Header.Subheader>
-                            </Header.Content>
-                          </Header>
-                        </Table.Cell>
-                      </Table.Row>
-                    </Table.Body>
-                  </Table>
+                  <Grid.Row>
+                    <Card.Header >
+                      <Form>
+                        <Form.Field style={{ fontSize: "30px", color: "#81172d" }}>
+                          <p>{resultado.apellido_paterno + " "+ resultado.apellido_materno}</p>                
+                        </Form.Field>
+                      </Form>
+                    </Card.Header>
+                    <Card.Meta
+                      style={{
+                        fontSize: "1.33em",
+                        color: "#81172d",
+                        marginTop: "5%",
+                      }}
+                    >
+                      {resultado.nombre}
+                    </Card.Meta>
+                  </Grid.Row>
+                  <Grid.Row>
+                    <Label
+                      as="a"
+                      color="teal"
+                      tag
+                      floating
+                      /*style={{
+                        float: "right",
+                        marginBottom: "30px",
+                        marginTop: "30px",
+                      }} */
+                    >
+                      {resultado.colegio_regional}
+                    </Label>
+                  </Grid.Row>
+                  <Grid.Row>
+                      <Especilidad datosColegiado={colegiado}/>
+                  </Grid.Row>
                 </Grid.Column>
               </Grid.Row>
             </Grid>
