@@ -6,7 +6,8 @@ import DetalleEspecialidad from "./DetalleEspecialidad";
 
 const Especilidad = (props) => {
   const { tipoEstudios, getTipoEstudios } = useEstudios();
-  const {datosColegiado} = props;
+  const { datosColegiado } = props;
+
   useEffect(() => {
     getTipoEstudios();
   }, []);
@@ -14,28 +15,27 @@ const Especilidad = (props) => {
   if (tipoEstudios === null) {
     return null;
   }
-  const panes = [
-    { menuItem: 'Tab 1', render: () => <Tab.Pane>Tab 1 Content</Tab.Pane> },
-    { menuItem: 'Tab 2', render: () => <Tab.Pane>Tab 2 Content</Tab.Pane> },
-    { menuItem: 'Tab 3', render: () => <Tab.Pane>Tab 3 Content</Tab.Pane> },
-  ]
-  
-  const detalle = (hola) => {
-    return map(hola, (tipoEstudio,index) => ({
-      key: index,
-      menuItem: tipoEstudio,
-      render: () => <Tab.Pane>Hola</Tab.Pane>
+
+  const detalle = (TipoEstudios, datosColegiado) => {
+    return map(TipoEstudios, (tipoEstudio, index) => ({
+      key: tipoEstudio.idtipo_estudio,
+      menuItem: tipoEstudio.name,
+      render: () => (
+        <DetalleEspecialidad
+          key={index}
+          ncop={datosColegiado.results[0].cop}
+          tipoEstudio={tipoEstudio.idtipo_estudio}
+        />
+      ),
     }));
   };
-  console.log("asd",tipoEstudios);
 
   return (
     <Tab
       style={{ marginTop: "30px" }}
       menu={{ fluid: true, vertical: true, tabular: true }}
-      panes={detalle(tipoEstudios)}
+      panes={detalle(tipoEstudios, datosColegiado)}
     />
-
   );
 };
 export default Especilidad;

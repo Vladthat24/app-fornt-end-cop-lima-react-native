@@ -1,8 +1,45 @@
-import React from "react";
-import { Tab } from "semantic-ui-react";
+import React,{useEffect} from "react";
+import { Table, Label } from "semantic-ui-react";
+import { useEstudios } from "../../../hooks";
+import { map } from "lodash";
 
-function DetalleEspecialidad() {
-  return <Tab.Pane></Tab.Pane>;
+function DetalleEspecialidad(props) {
+  const { ncop ,tipoEstudio} = props;
+  const { estudios, getEstudiosByCop } = useEstudios();
+
+  useEffect(() => {
+    getEstudiosByCop(ncop, tipoEstudio);
+  }, []);
+  if (estudios === null) {
+    return null;
+  }
+
+
+  return (
+    <Table celled>
+      <Table.Header>
+        <Table.Row>
+          <Table.HeaderCell>Codigo de Estudio</Table.HeaderCell>
+          <Table.HeaderCell>Nombre de Estudio</Table.HeaderCell>
+        </Table.Row>
+      </Table.Header>
+
+      <Table.Body>
+        {map(estudios, (estudio, index) => (
+          <Table.Row key={index}>
+            <Table.Cell
+              style={{ justifyContent: "center", alignItems: "center" }}
+            >
+              <Label style={{ textAlign: "center" }}>
+                {estudio.cod_estudio}
+              </Label>
+            </Table.Cell>
+            <Table.Cell>{estudio.name_estudio}</Table.Cell>
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table>
+  );
 }
 
 export default DetalleEspecialidad;

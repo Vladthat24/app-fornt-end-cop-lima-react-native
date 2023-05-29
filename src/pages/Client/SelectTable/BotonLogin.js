@@ -11,8 +11,11 @@ export function BotonLogin(props) {
   };
   return (
     <Container>
-      <Menu.Item as="a" active>
+      <Menu.Item as="a" active href="https://colegiodeobstetras.pe/">
         Pagina Principal
+      </Menu.Item>
+      <Menu.Item as="a" active href="/">
+        Busqueda
       </Menu.Item>
       <Menu.Item position="right">
         <Button
