@@ -15,6 +15,15 @@ export async function getRegistroApi(token, page, perPage) {
     throw error;
   }
 }
+
+export async function getRegistroSearchPaginationApi(page,perPage,searchTerm){
+  const url = `${BASE_API}/api/registro/?page=${page}&page_size=${perPage}&search=${searchTerm}`;
+  const response = await fetch(url);
+  const result=await response.json();
+  return result;
+}
+
+
 export async function getTotalRegistrosApi(){
   try{
     const url=`${BASE_API}/api/registro/total/`;

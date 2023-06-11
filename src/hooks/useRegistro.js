@@ -1,20 +1,26 @@
 import { useState } from "react";
 import { size } from "lodash";
-import { getRegistroApi,getColegiadoByCopApi, updateImgQRApi,getTotalRegistrosApi } from "../api/registro";
-import { useAuth} from "./";
+import {
+  getRegistroApi,
+  getColegiadoByCopApi,
+  updateImgQRApi,
+  getTotalRegistrosApi,
+  getRegistroSearchPaginationApi
+} from "../api/registro";
+import { useAuth } from "./";
 
 export function useRegistro() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [registros, setRegistros] = useState(null);
-  const [colegiado,setColegiado]= useState(null);
+  const [colegiado, setColegiado] = useState(null);
 
   const { auth } = useAuth();
 
-  const getRegistros = async (page,perPage) => {
+  const getRegistros = async (page, perPage) => {
     try {
       setLoading(true);
-      const response = await getRegistroApi(auth.token,page,perPage);
+      const response = await getRegistroApi(auth.token, page, perPage);
       setLoading(false);
       setRegistros(response);
     } catch (error) {
@@ -22,39 +28,55 @@ export function useRegistro() {
       setError(error);
     }
   };
-  const getTotalRegistros=async()=>{
-    try{
+  const getRegistroSearchPagination = async (page, perPage, searchTerm) => {
+    try {
       setLoading(true);
-      const response=await getTotalRegistrosApi();
+      const response = await getRegistroSearchPaginationApi(
+        page,
+        perPage,
+        searchTerm
+      );
       setLoading(false);
       setRegistros(response);
-    }catch(error){
+    } catch (error) {
       setLoading(false);
       setError(error);
     }
   };
-  const getColegiadoByCop=async(ncop)=>{
-    try{
-      setLoading(true);
-      const response=await getColegiadoByCopApi(ncop);
-      setLoading(false);
-      setColegiado(response);
-    }catch(error){
-    setLoading(false);
-    setError(error);
-    }
-  }
 
-  const updateImgQR=async(id, imgenQR)=>{
-    try{
+  const getTotalRegistros = async () => {
+    try {
       setLoading(true);
-      await updateImgQRApi(id, imgenQR,auth.token);
+      const response = await getTotalRegistrosApi();
       setLoading(false);
-    }catch(error){
+      setRegistros(response);
+    } catch (error) {
       setLoading(false);
       setError(error);
     }
-  }
+  };
+  const getColegiadoByCop = async (ncop) => {
+    try {
+      setLoading(true);
+      const response = await getColegiadoByCopApi(ncop);
+      setLoading(false);
+      setColegiado(response);
+    } catch (error) {
+      setLoading(false);
+      setError(error);
+    }
+  };
+
+  const updateImgQR = async (id, imgenQR) => {
+    try {
+      setLoading(true);
+      await updateImgQRApi(id, imgenQR, auth.token);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      setError(error);
+    }
+  };
 
   return {
     loading,
@@ -65,5 +87,6 @@ export function useRegistro() {
     getColegiadoByCop,
     updateImgQR,
     getTotalRegistros,
+    getRegistroSearchPagination,
   };
 }
