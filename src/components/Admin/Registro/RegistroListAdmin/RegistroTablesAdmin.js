@@ -47,7 +47,7 @@ export function RegistroTablesAdmin(props) {
   const domain = window.location.hostname;
   const port = window.location.port;
   const path = `colegiado/`;
-  const url = `http://${domain}:${port}/${path}`;
+  const url = `https://${domain}/${path}`;
   //navigate(url);
   console.log(`Navegacion: ${url}`);
 
@@ -179,7 +179,7 @@ const ActualizarQR=async()=>{
                     <QRCode
                       hidden
                       id={"qr" + table.cop}
-                      value={"http://localhost:3000/colegiado/" + table.cop}
+                      value={"https://consulta.colegiodeobstetras.pe/colegiado/" + table.cop}
                       size={100}
                       level={"H"}
                       includeMargin={true}

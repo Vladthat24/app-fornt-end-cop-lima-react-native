@@ -12,6 +12,9 @@ export function RegistrosAdmin() {
   const [totalPages, setTotalPages] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const { registros, getRegistroSearchPagination } = useRegistro();
+
+  /*   
   useEffect(() => {
     fetch(`${API_URL}?page=${page}&page_size=${perPage}&search=${searchTerm}`)
       .then((response) => response.json())
@@ -24,7 +27,17 @@ export function RegistrosAdmin() {
         }
       })
       .catch((error) => console.error(error));
+  }, [page, perPage, searchTerm]); */
+
+  useEffect(() => {
+    getRegistroSearchPagination(page, perPage, searchTerm);
   }, [page, perPage, searchTerm]);
+
+  if (registros === null) {
+    return null;
+  }
+  
+  console.log("RA-respuesta de api nueva:", registros);
 
   const handlePaginationChange = (e, { activePage }) => {
     setPage(activePage);
