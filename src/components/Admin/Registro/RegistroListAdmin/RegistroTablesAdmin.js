@@ -7,34 +7,47 @@ import {
   Modal,
   Input,
   Segment,
+  Label,
 } from "semantic-ui-react";
 import "./RegistroTablesAdmin.scss";
-import { Pagination, Grid } from "semantic-ui-react";
+import { Pagination, Grid, Checkbox } from "semantic-ui-react";
 import { ModalBasic } from "../../../Common";
 import DownloadImagenQR from "./DownloadImagenQR";
 import * as XLSX from "xlsx";
 
-
 import QRCode from "qrcode.react";
 import { useNavigate } from "react-router-dom";
 import { useRegistro } from "../../../../hooks";
-import { saveAs } from 'file-saver';
+import { saveAs } from "file-saver";
+import {
+  getExportarExcelApi,
+  getExportarExcelPersonalizadoAPi,
+} from "../../../../api/registro";
+import { HeaderPage } from "../../HeaderPage";
+import { AddRegistroListAdmin } from "./AddRegistroListAdmin";
 
 export function RegistroTablesAdmin(props) {
   const [showModal, setShowModal] = useState(false);
   const [titleModal, setTitleModal] = useState(null);
   const [urlQr, setUrlQr] = useState(null);
   const [contentModal, setContentModal] = useState(null);
+  const [contentModalAddRegistro, setContentModalAddRegistro] = useState(null);
+  const [refetch, setRefetch] = useState(false);
   const navigate = useNavigate();
-  const { updateImgQR,registros,getTotalRegistros } = useRegistro();
+  const { updateImgQR, registros, getTotalRegistros, getExportarExcel } =
+    useRegistro();
 
-  useEffect(()=>getTotalRegistros(),[]);
+  useEffect(() => getTotalRegistros(), []);
 
   const openCloseModal = () => setShowModal((prev) => !prev);
+  const onRefetch = () => setRefetch((prev) => !prev);
 
+
+  const [autoReload, setAutoReload] = useState(false);
   const {
     handleFirstPage,
     page,
+    perPage,
     handlePaginationChange,
     totalPages,
     handleLastPage,
@@ -60,52 +73,6 @@ export function RegistroTablesAdmin(props) {
     openCloseModal();
   };
 
-/*   const handleExportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Registros");
-    XLSX.writeFile(workbook, "registros.xlsx");
-  }; */
-
-/*   const handleExportExcel = async () => {
-  
-    // Crear una nueva hoja de cálculo
-    const workbook = XLSX.utils.book_new();
-  
-    // Convertir los datos en una matriz
-    const records = data.map((item) => {
-      
-      const { imagenqr, ...rest } = item;
-      return {
-        ...rest,
-        imagenqr: {
-          base64: imagenqr,
-          extension: 'png',
-        },
-      };
-    });
-    console.log(records);
-    // Crear una hoja de cálculo a partir de los datos
-    const worksheet = XLSX.utils.json_to_sheet(records);
-  
-    console.log("word:",worksheet);
-    for (let i = 2; i <= records.length + 1; i++) {
-      const cell = worksheet[`L${i}`];
-      console.log("Cell: ", cell.base64);
-      const img = await XlsxPopulate.fromBase64Async(cell.base64, cell.extension);
-      img.addTo(worksheet, { tl: { col: 1, row: i }, ext: { width: 100, height: 100 } });
-    }
-    
-  
-    // Agregar la hoja de cálculo al libro de trabajo
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Registros');
-  
-    // Guardar el archivo Excel
-    const excelData = await workbook.outputAsync();
-    const excelBlob = new Blob([excelData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(excelBlob, 'registros.xlsx');
-  }; */
-
   const obtenerBase64Img = async (cop) => {
     console.log(cop);
     const canvas = document.getElementById(cop);
@@ -117,120 +84,181 @@ export function RegistroTablesAdmin(props) {
     await updateImgQR(idcop, base64Image);
     return base64Image;
   };
-const ActualizarQR=async()=>{
+  const ActualizarQR = async () => {
+    for (const colegiados of data) {
+      console.log(colegiados.cop);
+      const canvas = document.getElementById("qr" + colegiados.cop);
+      const pngUrl = canvas.toDataURL("image/png");
+      const base64Image = pngUrl.split(",")[1];
+      console.log(base64Image);
+      console.log(colegiados.cop);
+      await updateImgQR(colegiados.cop, base64Image);
+    }
+  };
 
-  for(const colegiados of data){
-    console.log(colegiados.cop);
-    const canvas = document.getElementById("qr"+colegiados.cop);
-    const pngUrl = canvas.toDataURL("image/png");
-    const base64Image = pngUrl.split(",")[1];
-    console.log(base64Image);
-    console.log(colegiados.cop);
-    await updateImgQR(colegiados.cop,base64Image)
-  }
+  const onCheckAutoReload = (check) => {
+    if (check) {
+      setAutoReload(check);
+    } else {
+      setAutoReload(check);
+    }
+  };
 
-}
+  const ExportarExcelTotal = (autoReload) => {
+    if (autoReload) {
+      console.log("Es true");
+      getExportarExcelApi();
+    } else {
+      getExportarExcelPersonalizadoAPi(page, perPage);
+    }
+  };
+
+  const addUser = () => {
+    setTitleModal("Nuevo usuario");
+    setContentModalAddRegistro(
+      <AddRegistroListAdmin onClose={openCloseModal} onRefetch={onRefetch} />
+    );
+    openCloseModal();
+  };
+
   return (
-    <Segment>
-      <Grid>
-        <Grid.Column mobile={8} computer={3}>
-          <Input
-            icon="search"
-            placeholder="Buscar..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
-
-          <Button
-            color="green"
-            icon
-            onClick={ActualizarQR}
-            size="large"
-            fluid
-            style={{ marginTop: "10%" }}
-          >
-            Descargar Excel <Icon name="file excel outline" />
-          </Button>
-        </Grid.Column>
-        <Grid.Column mobile={8} computer={13}>
-          <Table className="table-tables-admin">
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell>N° COP</Table.HeaderCell>
-                <Table.HeaderCell>Nombre</Table.HeaderCell>
-                <Table.HeaderCell>Ap. Paterno</Table.HeaderCell>
-                <Table.HeaderCell>Ap. Materno</Table.HeaderCell>
-                <Table.HeaderCell>Qr</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-              {data.map((table, index) => (
-                <Table.Row key={index}>
-                  <Table.Cell>{table.cop}</Table.Cell>
-                  <Table.Cell>{table.nombre}</Table.Cell>
-                  <Table.Cell>{table.apellido_paterno}</Table.Cell>
-                  <Table.Cell>{table.apellido_materno}</Table.Cell>
-                  <Table.Cell>
-                    <QrColegiado
-                      showQR={(ncop) => showQR(ncop)}
-                      ncop={table.cop}
-                    />
-                    <QRCode
-                      hidden
-                      id={"qr" + table.cop}
-                      value={"https://consulta.colegiodeobstetras.pe/colegiado/" + table.cop}
-                      size={100}
-                      level={"H"}
-                      includeMargin={true}
-                    />
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-            <Actions
-              handleFirstPage={handleFirstPage}
-              page={page}
-              handlePaginationChange={handlePaginationChange}
-              totalPages={totalPages}
-              handleLastPage={handleLastPage}
-            />
-          </Table>
-
-          <ModalBasic
-            show={showModal}
-            onClose={openCloseModal}
-            title="Codigo QR de Colegiado"
-            size="mini"
-            children={contentModal}
-          />
-        </Grid.Column>
-      </Grid>
-      <Pagination
-        style={{ width: "100%", display: "flex", justifyContent: "center" }}
-        activePage={page}
-        onPageChange={handlePaginationChange}
-        totalPages={totalPages}
-        className="mi-nueva-clase"
+    <>
+      <HeaderPage
+        title="Colegiados"
+        btnTitle="Nuevo usuario"
+        btnClick={addUser}
       />
-        <Pagination
-    defaultActivePage={page}
-    firstItem={null}
-    lastItem={null}
-    onPageChange={handlePaginationChange}
-    pointing
-    secondary
-    totalPages={totalPages}
-  />
-    </Segment>
+      <Segment>
+        <Grid>
+          <Grid.Column mobile={8} computer={3}>
+            <Input
+              icon="search"
+              placeholder="Buscar..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+
+            <Button
+              color="green"
+              icon
+              onClick={() => ExportarExcelTotal(autoReload)}
+              size="large"
+              fluid
+              style={{ marginTop: "10%" }}
+            >
+              Descargar Excel <Icon name="file excel outline" />
+            </Button>
+            <Button
+              color="black"
+              icon
+              onClick={ActualizarQR}
+              size="large"
+              fluid
+              style={{ marginTop: "10%" }}
+            >
+              Actualizar Qr <Icon name="qrcode" />
+            </Button>
+          </Grid.Column>
+          <Grid.Column mobile={8} computer={13}>
+            <div className="table-tables-admin__reaload-toggle">
+              <span>
+                {" "}
+                <Label color="green" horizontal>
+                  Descargar Reporte Completo
+                </Label>
+              </span>
+              <Checkbox
+                toggle
+                checked={autoReload}
+                onChange={(_, data) => onCheckAutoReload(data.checked)}
+              />
+            </div>
+            <Table className="table-tables-admin">
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>N° COP</Table.HeaderCell>
+                  <Table.HeaderCell>Nombre</Table.HeaderCell>
+                  <Table.HeaderCell>Ap. Paterno</Table.HeaderCell>
+                  <Table.HeaderCell>Ap. Materno</Table.HeaderCell>
+                  <Table.HeaderCell>Visualizar QR</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+
+              <Table.Body>
+                {data.map((table, index) => (
+                  <Table.Row key={index}>
+                    <Table.Cell>{table.cop}</Table.Cell>
+                    <Table.Cell>{table.nombre}</Table.Cell>
+                    <Table.Cell>{table.apellido_paterno}</Table.Cell>
+                    <Table.Cell>{table.apellido_materno}</Table.Cell>
+                    <Table.Cell className={`center aligned`}>
+                      <QrColegiado
+                        showQR={(ncop) => showQR(ncop)}
+                        ncop={table.cop}
+                        imagenqr={table.imagenqr}
+                      />
+
+                      <QRCode
+                        hidden
+                        id={"qr" + table.cop}
+                        value={
+                          "https://consulta.colegiodeobstetras.pe/colegiado/" +
+                          table.cop
+                        }
+                        size={100}
+                        level={"H"}
+                        includeMargin={true}
+                      />
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+              <Table.Footer>
+                <Table.Row>
+                  <Table.HeaderCell colSpan="5" style={{ textAlign: "center" }}>
+                    <Actions
+                      handleFirstPage={handleFirstPage}
+                      page={page}
+                      handlePaginationChange={handlePaginationChange}
+                      totalPages={totalPages}
+                      handleLastPage={handleLastPage}
+                    />
+                  </Table.HeaderCell>
+                </Table.Row>
+              </Table.Footer>
+            </Table>
+
+            <ModalBasic
+              show={showModal}
+              onClose={openCloseModal}
+              title="Codigo QR de Colegiado"
+              size="mini"
+              children={contentModal}
+            />
+            <ModalBasic
+              show={showModal}
+              onClose={openCloseModal}
+              title="Agregar Colegiado"
+              size="large"
+              children={contentModalAddRegistro}
+            />
+          </Grid.Column>
+        </Grid>
+      </Segment>
+    </>
   );
 }
 
 function QrColegiado(props) {
-  const { showQR, ncop } = props;
+  const { showQR, ncop, imagenqr } = props;
 
   return (
-    <Button icon onClick={() => showQR(ncop)}>
+    <Button
+      icon
+      onClick={() => showQR(ncop)}
+      circular
+      className={`${imagenqr ? "green" : "red"}`}
+    >
       <Icon name="qrcode" />
     </Button>
   );
@@ -245,21 +273,10 @@ function Actions(props) {
   } = props;
 
   return (
-    <Table.Footer className="table-footer-registro">
-      <Table.Row>
-        <Table.HeaderCell colSpan="10">
-          <Menu floated="right" pagination>
-            {/*           <Button onClick={() => handleFirstPage()}>Antes</Button> */}
-            <Pagination
-              style={{ width: "450px" }}
-              activePage={page}
-              onPageChange={handlePaginationChange}
-              totalPages={totalPages}
-            />
-            {/*           <Button onClick={() => handleLastPage()}>Despues</Button> */}
-          </Menu>
-        </Table.HeaderCell>
-      </Table.Row>
-    </Table.Footer>
+    <Pagination
+      activePage={page}
+      onPageChange={handlePaginationChange}
+      totalPages={totalPages}
+    />
   );
 }

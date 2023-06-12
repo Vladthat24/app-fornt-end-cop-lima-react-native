@@ -11,7 +11,7 @@ export function HeaderPage(props) {
       <h2>{title}</h2>
       <div>
         {btnTitle && (
-          <Button positive onClick={btnClick}>
+          <Button positive onClick={btnClick}  inverted color='red'>
             {btnTitle}
           </Button>
         )}

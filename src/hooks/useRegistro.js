@@ -5,7 +5,8 @@ import {
   getColegiadoByCopApi,
   updateImgQRApi,
   getTotalRegistrosApi,
-  getRegistroSearchPaginationApi
+  getRegistroSearchPaginationApi,
+  getExportarExcelApi,
 } from "../api/registro";
 import { useAuth } from "./";
 
@@ -77,6 +78,7 @@ export function useRegistro() {
       setError(error);
     }
   };
+
 
   return {
     loading,

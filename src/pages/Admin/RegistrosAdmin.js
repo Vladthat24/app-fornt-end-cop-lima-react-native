@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useRegistro } from "../../hooks/useRegistro";
 import { RegistroTablesAdmin } from "../../components/Admin";
 
-/* const API_URL = "http://127.0.0.1:8000/api/registro/"; */
-const API_URL = "https://apicopperu.colegiodeobstetras.pe/api/registro/";
+const API_URL = "http://127.0.0.1:8000/api/registro/";
+//const API_URL = "https://apicopperu.colegiodeobstetras.pe/api/registro/";
 
 export function RegistrosAdmin() {
   const [data, setData] = useState([]);
@@ -14,7 +14,6 @@ export function RegistrosAdmin() {
 
   const { registros, getRegistroSearchPagination } = useRegistro();
 
-  /*   
   useEffect(() => {
     fetch(`${API_URL}?page=${page}&page_size=${perPage}&search=${searchTerm}`)
       .then((response) => response.json())
@@ -27,18 +26,9 @@ export function RegistrosAdmin() {
         }
       })
       .catch((error) => console.error(error));
-  }, [page, perPage, searchTerm]); */
-
-  useEffect(() => {
-    getRegistroSearchPagination(page, perPage, searchTerm);
   }, [page, perPage, searchTerm]);
 
-  if (registros === null) {
-    return null;
-  }
-  
-  console.log("RA-respuesta de api nueva:", registros);
-
+  console.log("DataResults",data);
   const handlePaginationChange = (e, { activePage }) => {
     setPage(activePage);
   };
@@ -62,6 +52,7 @@ export function RegistrosAdmin() {
       <RegistroTablesAdmin
         handleFirstPage={handleFirstPage}
         page={page}
+        perPage={perPage}
         handlePaginationChange={handlePaginationChange}
         totalPages={totalPages}
         handleLastPage={handleLastPage}
