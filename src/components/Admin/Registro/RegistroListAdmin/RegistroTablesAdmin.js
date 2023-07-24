@@ -11,7 +11,7 @@ import {
 } from "semantic-ui-react";
 import "./RegistroTablesAdmin.scss";
 import { Pagination, Grid, Checkbox } from "semantic-ui-react";
-import { ModalBasic } from "../../../Common";
+import { ModalBasic, ModalAddRegistro } from "../../../Common";
 import DownloadImagenQR from "./DownloadImagenQR";
 import * as XLSX from "xlsx";
 
@@ -28,10 +28,12 @@ import { AddRegistroListAdmin } from "./AddRegistroListAdmin";
 
 export function RegistroTablesAdmin(props) {
   const [showModal, setShowModal] = useState(false);
-  const [titleModal, setTitleModal] = useState(null);
-  const [urlQr, setUrlQr] = useState(null);
   const [contentModal, setContentModal] = useState(null);
+
+  const [showModalAddRegistro, setShowModalAddRegistro] = useState(false);
   const [contentModalAddRegistro, setContentModalAddRegistro] = useState(null);
+
+  const [titleModal, setTitleModal] = useState(null);
   const [refetch, setRefetch] = useState(false);
   const navigate = useNavigate();
   const { updateImgQR, registros, getTotalRegistros, getExportarExcel } =
@@ -42,6 +44,8 @@ export function RegistroTablesAdmin(props) {
   const openCloseModal = () => setShowModal((prev) => !prev);
   const onRefetch = () => setRefetch((prev) => !prev);
 
+  const openCloseModalAddRegistro = () =>
+    setShowModalAddRegistro((prev) => !prev);
 
   const [autoReload, setAutoReload] = useState(false);
   const {
@@ -116,9 +120,12 @@ export function RegistroTablesAdmin(props) {
   const addUser = () => {
     setTitleModal("Nuevo usuario");
     setContentModalAddRegistro(
-      <AddRegistroListAdmin onClose={openCloseModal} onRefetch={onRefetch} />
+      <AddRegistroListAdmin
+        onClose={openCloseModalAddRegistro}
+        onRefetch={onRefetch}
+      />
     );
-    openCloseModal();
+    openCloseModalAddRegistro();
   };
 
   return (
@@ -235,9 +242,9 @@ export function RegistroTablesAdmin(props) {
               size="mini"
               children={contentModal}
             />
-            <ModalBasic
-              show={showModal}
-              onClose={openCloseModal}
+            <ModalAddRegistro
+              show={showModalAddRegistro}
+              onClose={openCloseModalAddRegistro}
               title="Agregar Colegiado"
               size="large"
               children={contentModalAddRegistro}

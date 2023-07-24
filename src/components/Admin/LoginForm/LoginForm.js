@@ -18,13 +18,12 @@ export function LoginForm() {
 
     validationSchema: Yup.object(validationSchema()),
 
-    //capturar lo enviado por el form
+ 
     onSubmit: async (formValue) => {
       try {
-        //Cuando el usuario realice el login
-        //ejecutamos la funcion login
+
         const response = await loginApi(formValue);
-        //capturando el access token y lo envamos al login hooks
+
         const { access } = response;
         login(access);
       } catch (error) {
